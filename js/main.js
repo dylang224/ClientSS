@@ -42,7 +42,7 @@ async function fetchPlayerSummary() {
   }
 }
 
-// Function to fetch and display owned games
+// Function to fetch and display owned games with thumbnails
 async function fetchOwnedGames() {
   try {
     // Delay for 1 second before making the API request
@@ -62,7 +62,24 @@ async function fetchOwnedGames() {
 
       games.forEach((game) => {
         const listItem = document.createElement('li');
-        listItem.textContent = `App ID: ${game.appid} - Playtime: ${Math.round(game.playtime_forever / 60)} hours`;
+
+        // Construct the URL for the game thumbnail (capsule image)
+        const thumbnailUrl = `https://steamcdn-a.akamaihd.net/steam/apps/${game.appid}/capsule_184x69.jpg`;
+
+        // Create an image element for the thumbnail
+        const thumbnailImg = document.createElement('img');
+        thumbnailImg.src = thumbnailUrl;
+        thumbnailImg.alt = `${game.name} Thumbnail`;
+
+        // Create a text element for game details
+        const gameDetails = document.createElement('span');
+        gameDetails.textContent = `${game.name} - Playtime: ${Math.round(game.playtime_forever / 60)} hours`;
+
+        // Append the image and game details to the list item
+        listItem.appendChild(thumbnailImg);
+        listItem.appendChild(gameDetails);
+
+        // Append the list item to the game list
         gameList.appendChild(listItem);
       });
     } else {
