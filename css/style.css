@@ -1,0 +1,41 @@
+/******************************************
+/* CSS
+/*******************************************/
+
+/* Box Model Hack */
+*{
+  box-sizing: border-box;
+}body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+#profile {
+  margin: 20px;
+}
+
+#avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+}
+
+#games {
+  margin-top: 30px;
+}
+
+#game-list {
+  list-style: none;
+  padding: 0;
+}
+
+
+/******************************************
+/* LAYOUT
+/*******************************************/
+
+
+
+/******************************************
+/* ADDITIONAL STYLES
+/*******************************************/
