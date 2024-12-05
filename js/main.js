@@ -1,7 +1,15 @@
-const apiKey = "66434301784863C74CBE9477EF1B1983";
+const apiKey = "E95C242CE7F964165A8836C025ECB886";
 const steamId = "76561199130288682"; // Example Steam ID
 
-// Fetch player profile information
+
+
+fetch(`https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${apiKey}&steamids=${steamId}`)
+  .then(response => response.json())
+  .then(data => console.log(data))
+  .catch(error => console.error("Fetch error:", error));
+
+
+/* Fetch player profile information
 async function fetchPlayerProfile() {
   const response = await fetch(
     `https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${apiKey}&steamids=${steamId}`
@@ -50,4 +58,4 @@ async function init() {
   await displayGames();
 }
 
-init();
+init(); */
