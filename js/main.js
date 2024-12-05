@@ -1,58 +1,80 @@
-const apiKey = "E95C242CE7F964165A8836C025ECB886";
-const steamId = "76561199130288682"; // Example Steam ID
 
 
-const endpoint = `http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${apiKey}&steamids=${steamId}`;
+// Replace with your actual Steam API key and Steam ID
+const apiKey = 'E95C242CE7F964165A8836C025ECB886';
+const steamId = '76561199130288682';
 
-document.addEventListener('DOMContentLoaded', async () => {
+// Use the CORS Anywhere proxy
+const proxy = 'https://cors-anywhere.herokuapp.com/';
+const playerEndpoint = `${proxy}http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${apiKey}&steamids=${steamId}`;
+const gamesEndpoint = `${proxy}http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=${apiKey}&steamid=${steamId}&format=json`;
+
+// Function to fetch and display player summary
+// Function to introduce delay between API requests
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// Function to fetch and display player summary
+async function fetchPlayerSummary() {
   try {
-    console.log('Fetching data from:', endpoint);
-    const response = await fetch(endpoint);
+    // Delay for 1 second before making the API request
+    await delay(1000);
 
+    const response = await fetch(playerEndpoint);
     if (!response.ok) {
       throw new Error(`HTTP Error: ${response.status}`);
     }
 
     const data = await response.json();
-    console.log('Fetched Data:', data);
-
     const player = data.response.players[0];
+
     if (player) {
-      displayPlayerSummary(player);
+      // Update profile elements
+      document.getElementById('avatar').src = player.avatar;
+      document.getElementById('username').textContent = player.personaname;
+      document.getElementById('profile-link').href = player.profileurl;
     } else {
-      console.error('No player data found for the provided Steam ID.');
+      console.error('No player data found.');
     }
   } catch (error) {
-    console.error('Error fetching player summaries:', error.message);
-  }
-});
-
-function displayPlayerSummary(player) {
-  console.log('Player Data:', player);
-
-  const avatarElement = document.getElementById('avatar');
-  const usernameElement = document.getElementById('username');
-  const profileLinkElement = document.getElementById('profile-link');
-
-  if (avatarElement) {
-    avatarElement.src = player.avatar;
-    console.log('Avatar updated:', player.avatar);
-  } else {
-    console.error('Avatar element not found.');
-  }
-
-  if (usernameElement) {
-    usernameElement.textContent = player.personaname;
-    console.log('Username updated:', player.personaname);
-  } else {
-    console.error('Username element not found.');
-  }
-
-  if (profileLinkElement) {
-    profileLinkElement.href = player.profileurl;
-    profileLinkElement.textContent = 'View Steam Profile';
-    console.log('Profile link updated:', player.profileurl);
-  } else {
-    console.error('Profile link element not found.');
+    console.error('Error fetching player summary:', error.message);
   }
 }
+
+// Function to fetch and display owned games
+async function fetchOwnedGames() {
+  try {
+    // Delay for 1 second before making the API request
+    await delay(1000);
+
+    const response = await fetch(gamesEndpoint);
+    if (!response.ok) {
+      throw new Error(`HTTP Error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const games = data.response.games;
+
+    if (games) {
+      const gameList = document.getElementById('game-list');
+      gameList.innerHTML = ''; // Clear existing games
+
+      games.forEach((game) => {
+        const listItem = document.createElement('li');
+        listItem.textContent = `App ID: ${game.appid} - Playtime: ${Math.round(game.playtime_forever / 60)} hours`;
+        gameList.appendChild(listItem);
+      });
+    } else {
+      console.error('No games found for this player.');
+    }
+  } catch (error) {
+    console.error('Error fetching owned games:', error.message);
+  }
+}
+
+// Run both fetch functions after DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+  fetchPlayerSummary();
+  fetchOwnedGames();
+});
